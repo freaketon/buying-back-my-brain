@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Brain-Dump Sorter — ArangoRaw</title>
+<meta name="description" content="Turn the mess in your head into five clear piles — before it becomes another to-do list.">
+<meta property="og:title" content="The Brain-Dump Sorter — ArangoRaw">
+<meta property="og:description" content="Turn the mess in your head into five clear piles — before it becomes another to-do list.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0D1117; --depth:#161B22; --stone:#21262D; --cream:#F0ECE3;
+  --mid:#8B8F96; --jade:#50DCA0; --jade-dim:#2f9d72;
+  --glass:rgba(240,236,227,.05); --glass-brd:rgba(240,236,227,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;color:var(--cream);
+  background:var(--night);line-height:1.55;-webkit-font-smoothing:antialiased;
+  min-height:100vh;overflow-x:hidden;position:relative;
+}
+.bg{position:fixed;inset:0;z-index:-2;overflow:hidden;background:
+  radial-gradient(1200px 800px at 80% -10%, #14241d 0%, transparent 55%),
+  radial-gradient(900px 700px at -10% 110%, #161B22 0%, transparent 60%), var(--night);}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55}
+.blob-jade{width:46vw;height:46vw;background:#1f8f64;top:-12vw;right:-8vw}
+.blob-teal{width:38vw;height:38vw;background:#0e3b4a;bottom:-10vw;left:-8vw}
+.grain{position:fixed;inset:0;z-index:-1;opacity:.04;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:760px;margin:0 auto;padding:34px 22px 80px}
+.glass{background:var(--glass);backdrop-filter:blur(20px) saturate(120%);
+  -webkit-backdrop-filter:blur(20px) saturate(120%);
+  border:1px solid var(--glass-brd);border-radius:20px;
+  box-shadow:0 8px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);}
+.overline{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--jade);display:flex;align-items:center;gap:10px}
+.overline::before{content:"";width:26px;height:2px;background:var(--jade)}
+.topbar{padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}
+.topbar .brand{font-family:'Bebas Neue';letter-spacing:.12em;font-size:20px;color:var(--cream)}
+.kw-pill{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;
+  font-size:12px;letter-spacing:.18em;color:var(--night);background:var(--jade);
+  padding:7px 14px;border-radius:999px;font-weight:500}
+.kind{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--mid);
+  text-transform:uppercase;margin-top:18px}
+h1{font-family:'Bebas Neue';font-weight:400;line-height:.96;letter-spacing:.01em;
+  font-size:clamp(48px,11vw,86px);margin:10px 0 6px;color:var(--cream)}
+.promise{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(19px,4.4vw,26px);color:rgba(240,236,227,.78);max-width:34ch;line-height:1.35}
+.section-label{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--jade);margin:42px 0 16px;display:flex;align-items:center;gap:10px}
+.section-label::before{content:"";width:18px;height:2px;background:var(--jade)}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:560px){.cards{grid-template-columns:1fr}}
+.card{padding:18px;border-radius:16px}
+.card .n{font-family:'DM Mono',monospace;font-size:12px;color:var(--jade);letter-spacing:.1em}
+.card .lbl{font-family:'Bebas Neue';font-size:24px;letter-spacing:.02em;margin:6px 0 4px;color:var(--cream)}
+.card .desc{font-size:14px;color:var(--mid);line-height:1.45}
+.promptwrap{padding:20px;border-radius:20px;margin-top:14px;position:relative}
+.promptwrap .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.promptwrap .head span{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--mid);text-transform:uppercase}
+.copy{font-family:'DM Sans';font-weight:700;font-size:13px;letter-spacing:.04em;color:var(--night);
+  background:var(--jade);border:0;border-radius:999px;padding:9px 18px;cursor:pointer;transition:.2s;white-space:nowrap}
+.copy:hover{filter:brightness(1.08)}
+.copy.done{background:var(--cream)}
+pre{font-family:'DM Mono',monospace;font-size:13.5px;line-height:1.62;color:rgba(240,236,227,.92);
+  white-space:pre-wrap;word-break:break-word;background:rgba(13,17,23,.55);
+  border:1px solid rgba(240,236,227,.08);border-radius:14px;padding:18px;overflow-x:auto;max-height:none}
+.steps{list-style:none;counter-reset:s;margin-top:8px;display:grid;gap:12px}
+.steps li{counter-increment:s;display:flex;gap:14px;align-items:flex-start;font-size:15px;color:rgba(240,236,227,.85)}
+.steps li::before{content:counter(s);flex:0 0 28px;height:28px;border-radius:50%;
+  display:grid;place-items:center;font-family:'DM Mono';font-size:13px;color:var(--jade);
+  border:1px solid var(--jade-dim);background:rgba(80,220,160,.08)}
+footer{margin-top:54px;text-align:center;color:var(--mid);font-size:13px}
+footer .b{font-family:'Bebas Neue';letter-spacing:.16em;font-size:22px;color:var(--cream);display:block;margin-bottom:6px}
+footer .tag{font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(240,236,227,.6)}
+.section-label.first{margin-top:34px}
+</style>
+</head><body>
+<div class="bg"><div class="blob blob-jade"></div><div class="blob blob-teal"></div></div>
+<div class="grain"></div>
+<div class="wrap">
+  <div class="topbar glass">
+    <div class="overline">Day 15 / 100</div>
+    <div class="brand">ARANGORAW</div>
+  </div>
+
+  <span class="kw-pill">◆ DUMP</span>
+  <div class="kind">AI PROMPT</div>
+  <h1>The Brain-Dump Sorter</h1>
+  <p class="promise">Turn the mess in your head into five clear piles — before it becomes another to-do list.</p>
+
+  <div class="section-label first">The system</div>
+  <div class="cards">
+        <div class="card glass"><div class="n">01</div><div class="lbl">Decisions</div><div class="desc">Needs a frame, not more thinking.</div></div>
+        <div class="card glass"><div class="n">02</div><div class="lbl">Tasks</div><div class="desc">Needs one clear next action.</div></div>
+        <div class="card glass"><div class="n">03</div><div class="lbl">Fears</div><div class="desc">Needs naming, not solving.</div></div>
+        <div class="card glass"><div class="n">04</div><div class="lbl">Waiting loops</div><div class="desc">Waiting on someone — needs a place to live.</div></div>
+        <div class="card glass"><div class="n">05</div><div class="lbl">Noise</div><div class="desc">Not real, not urgent. Name it and let it go.</div></div>
+  </div>
+
+  <div class="section-label">The prompt — copy &amp; paste</div>
+  <div class="promptwrap glass">
+    <div class="head"><span>Paste into Claude or ChatGPT</span>
+      <button class="copy" id="cp">Copy prompt</button></div>
+    <pre id="pt">You are my brain-dump sorter. I'll paste a raw, messy list of everything in my head.
+Do not try to make me do more. Sort every item into exactly five piles:
+
+1) DECISIONS — needs a frame to decide
+2) TASKS — needs a clear next action
+3) FEARS — needs naming, not solving
+4) WAITING LOOPS — waiting on someone/something; needs a place to live
+5) NOISE — not real or not urgent
+
+For each Decision, give the single question that would unlock it.
+For each Task, write the smallest first action.
+For each Fear, name it in one plain sentence.
+For each Waiting loop, note who or what it's waiting on.
+List Noise last, briefly.
+
+End with one line: what my nervous system can stop carrying today.
+
+Here is my dump:
+[PASTE YOUR BRAIN DUMP HERE]</pre>
+  </div>
+
+  <div class="section-label">How to use it</div>
+  <ol class="steps"><li>Open Claude or ChatGPT.</li><li>Paste the prompt, then dump everything in your head where it says [PASTE].</li><li>Let it sort. Act only on the Tasks — let the rest sit in their pile.</li></ol>
+
+  <footer>
+    <span class="b">ARANGORAW</span>
+    <span class="tag">Buying back my brain — one system at a time.</span>
+  </footer>
+</div>
+<script>
+  const b=document.getElementById('cp'),p=document.getElementById('pt');
+  b.addEventListener('click',async()=>{
+    try{await navigator.clipboard.writeText(p.innerText);}
+    catch(e){const r=document.createRange();r.selectNode(p);getSelection().removeAllRanges();getSelection().addRange(r);document.execCommand('copy');getSelection().removeAllRanges();}
+    b.textContent='Copied ✓';b.classList.add('done');setTimeout(()=>{b.textContent='Copy prompt';b.classList.remove('done');},1800);
+  });
+</script>
+</body></html>
