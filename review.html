@@ -77,6 +77,17 @@ footer{margin-top:54px;text-align:center;color:var(--mid);font-size:13px}
 footer .b{font-family:'Bebas Neue';letter-spacing:.16em;font-size:22px;color:var(--cream);display:block;margin-bottom:6px}
 footer .tag{font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(240,236,227,.6)}
 .section-label.first{margin-top:34px}
+.capture{padding:22px}
+.cap-copy{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:rgba(240,236,227,.8);margin-bottom:16px;line-height:1.4}
+.cap-form{display:flex;gap:10px;flex-wrap:wrap}
+.cap-form input{flex:1;min-width:190px;font-family:'DM Sans';font-size:15px;color:var(--cream);
+  background:rgba(13,17,23,.5);border:1px solid rgba(240,236,227,.16);border-radius:999px;padding:13px 18px;outline:none;transition:.2s}
+.cap-form input::placeholder{color:var(--mid)}
+.cap-form input:focus{border-color:var(--jade)}
+.cap-form button{font-family:'DM Sans';font-weight:700;font-size:14px;letter-spacing:.02em;color:var(--night);
+  background:var(--jade);border:0;border-radius:999px;padding:13px 24px;cursor:pointer;white-space:nowrap;transition:.2s}
+.cap-form button:hover{filter:brightness(1.08)}
+.cap-done{font-family:'Bebas Neue';font-size:24px;letter-spacing:.04em;color:var(--jade)}
 </style>
 </head><body>
 <div class="bg"><div class="blob blob-jade"></div><div class="blob blob-teal"></div></div>
@@ -129,6 +140,18 @@ Here is my week:
   <div class="section-label">How to use it</div>
   <ol class="steps"><li>Sunday night, paste your week — wins, misses, and all.</li><li>Answer the six questions without grading yourself.</li><li>Build only the one system it points to. Carry less next week.</li></ol>
 
+  <div class="section-label">Want what's next</div>
+  <div class="capture glass">
+    <div class="cap-copy">New systems for buying back your brain — sent when they're ready. No noise. Leave anytime.</div>
+    <form class="cap-form" action="https://docs.google.com/forms/d/e/1FAIpQLSf2PVcvpg5M6koQ33OrGP9vxw1f0PNABD5wYCkgtdFwPfWsmQ/formResponse" method="POST" target="cap_if"
+         onsubmit="this.style.display='none';this.nextElementSibling.hidden=false;">
+        <input name="emailAddress" type="email" required placeholder="you@email.com" aria-label="Email address">
+        <input type="hidden" name="fvv" value="1"><input type="hidden" name="pageHistory" value="0"><input type="hidden" name="submissionTimestamp" value="-1">
+        <button type="submit">Send me what's next</button>
+      </form>
+      <div class="cap-done" hidden>You're in. ✓</div>
+      <iframe name="cap_if" title="submit" style="display:none"></iframe>
+  </div>
   <footer>
     <span class="b">ARANGORAW</span>
     <span class="tag">Buying back my brain — one system at a time.</span>
